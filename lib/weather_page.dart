@@ -78,107 +78,54 @@ class _WeatherPageState extends State<WeatherPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text("Montreal",
-            style: TextStyle(color: Colors.white, fontSize: width / 18 , fontWeight: FontWeight.bold)),
-        Text("19 \u00BA C",
-            style: TextStyle(color: Colors.white, fontSize: width / 10)),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(
-              "https://openweathermap.org/img/wn/04n@2x.png",
-              width: width / 2,
-              height: width / 3,
-              fit: BoxFit.fitWidth,
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Text("broken clouds",
-                style: TextStyle(
-                    fontSize: width / 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 107, 106, 102)))
-          ],
-        )
+            style: TextStyle(color: Colors.white, fontSize: 22 , fontWeight: FontWeight.bold)),
+        Text("19",
+            style: TextStyle(color: Colors.white, fontSize: 76)),
+        Image.network(
+          "https://openweathermap.org/img/wn/04n@2x.png",
+          width: width / 4,
+          height: width / 4,
+          fit: BoxFit.fill,
+        ),
+        Text("Mostly Clear",
+            style: TextStyle(color: Color.fromARGB(235, 235, 245, 200), fontSize: 20)),
+        Text("H:24°   L:18°",
+            style: TextStyle(color: Colors.white, fontSize: 20)),
+        Container(
+          margin: EdgeInsets.only(top: 20),
+          child: InkWell(
+              child: Image.asset("assets/images/house.png"),
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                        return bottomSheet(5);
+                    }
+                );
+              },
+          ),
+        ),
       ],
     );
   }
 
-// Widget detailTemp() {
-//   return Row(
-//     crossAxisAlignment: CrossAxisAlignment.center,
-//     mainAxisAlignment: MainAxisAlignment.center,
-//     children: [
-//       Expanded(
-//         child: Card(
-//           child: Container(
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 Image.asset("assets/images/ic_humidity.png"),
-//                 Text("${model.main?.humidity}",
-//                     style: TextStyle(
-//                         fontSize: widget.width / 20,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.grey[900])),
-//                 Text("Humidity",
-//                     style: TextStyle(
-//                         fontSize: widget.width / 25,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.grey[500])),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//       Expanded(
-//         child: Card(
-//           child: Container(
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 Image.asset("assets/images/ic_wind.png"),
-//                 Text("${model.wind?.speed}",
-//                     style: TextStyle(
-//                         fontSize: widget.width / 20,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.grey[900])),
-//                 Text("Wind",
-//                     style: TextStyle(
-//                         fontSize: widget.width / 25,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.grey[500])),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//       Expanded(
-//         child: Card(
-//           child: Container(
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 Image.asset("assets/images/ic_air_pressure.png"),
-//                 Text("${model.main?.pressure}",
-//                     style: TextStyle(
-//                         fontSize: widget.width / 20,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.grey[900])),
-//                 Text("Air pressure",
-//                     style: TextStyle(
-//                         fontSize: widget.width / 25,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.grey[500])),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     ],
-//   );
-// }
+  Widget bottomSheet(int count) {
+    return ListView.builder(
+        itemCount: count,
+        itemBuilder: (context, index) {
+          return itemWeatherHour();
+        }
+    );
+  }
+
+  Widget itemWeatherHour() {
+    return Container(
+      width: 60,
+      decoration: BoxDecoration(
+        border: Border.all(width: 30)
+      ),
+    );
+  }
 
 // Widget notFoundCity() {
 //   return Container(
