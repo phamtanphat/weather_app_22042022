@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app_22042022/weather_page.dart';
+import 'package:weather_app_22042022/presentation/features/weather/weather_page.dart';
 
 void main() {
   runApp(MyApp());
