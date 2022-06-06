@@ -7,7 +7,9 @@ import 'package:weather_app_22042022/data/remote/model/weather_forecast.dart';
 class WeatherRepository {
   late ApiService _apiService;
 
-  WeatherRepository({required ApiService apiService}) {
+  WeatherRepository();
+
+  void updateApiService({required ApiService apiService}) {
     _apiService = apiService;
   }
 

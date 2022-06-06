@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:weather_app_22042022/data/remote/api_service.dart';
-import 'package:weather_app_22042022/data/remote/dio_client.dart';
+import 'package:weather_app_22042022/data/remote/model/weather_forecast.dart';
 import 'package:weather_app_22042022/data/repository/weather_repository.dart';
+import 'package:provider/provider.dart';
 
 class WeatherPage extends StatefulWidget {
-  const WeatherPage({Key? key}) : super(key: key);
 
   @override
   State<WeatherPage> createState() => _WeatherPageState();
@@ -15,17 +14,13 @@ class _WeatherPageState extends State<WeatherPage> {
   late double width;
   late double height;
   TextEditingController controller = TextEditingController();
-  late WeatherRepository _repository;
+  late WeatherRepository repository;
 
   @override
   void didChangeDependencies() {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    _repository = WeatherRepository(apiService: ApiService());
-    _repository
-        .getTempFromCity("Hanoi")
-        .then((value) => print(value.main?.temp.toString()))
-        .catchError((e) => print(e));
+    repository = context.read();
     super.didChangeDependencies();
   }
 
