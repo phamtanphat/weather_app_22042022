@@ -1,15 +1,21 @@
+import 'package:dio/dio.dart';
+
 class DioClient {
-  DioClient? _instance = null;
+  static final DioClient _instance = DioClient._internal();
+  static late Dio _dio;
 
-  // private constructor
-  _DioClient() {
-
+  factory DioClient() {
+    _dio = Dio(BaseOptions(
+      baseUrl: 'http://api.openweathermap.org/',
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+    ));
+    return _instance;
   }
 
-  DioClient getInstance() {
-    if (_instance == null) {
-      _instance = _DioClient();
-    }
-    return _instance!;
+  DioClient._internal();
+
+  Dio getDio() {
+    return _dio;
   }
 }
