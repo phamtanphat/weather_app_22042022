@@ -5,7 +5,6 @@ import 'package:weather_app_22042022/data/repository/weather_repository.dart';
 import 'package:provider/provider.dart';
 
 class WeatherPage extends StatefulWidget {
-
   @override
   State<WeatherPage> createState() => _WeatherPageState();
 }
@@ -15,12 +14,14 @@ class _WeatherPageState extends State<WeatherPage> {
   late double height;
   TextEditingController controller = TextEditingController();
   late WeatherRepository repository;
+  late Future<WeatherForecast> futureData;
 
   @override
   void didChangeDependencies() {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     repository = context.read();
+    futureData = repository.getTempFromCity("Hanoi");
     super.didChangeDependencies();
   }
 
@@ -40,13 +41,27 @@ class _WeatherPageState extends State<WeatherPage> {
                       constraints:
                           BoxConstraints(minHeight: constraint.maxHeight),
                       child: IntrinsicHeight(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              searchBox(),
-                              tempCity()
-                              // Expanded(flex: 2, child: detailTemp(model))
-                            ]),
+                        child: FutureBuilder<WeatherForecast>(
+                          future: futureData,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(snapshot.error.toString()));
+                            } else if (snapshot.hasData) {
+                              return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [searchBox(), tempCity(snapshot.data!)]);
+                            } else {
+                              return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    searchBox(),
+                                  ]);
+                            }
+                          },
+                        ),
                       ),
                     ),
                   );
@@ -71,27 +86,27 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget tempCity() {
+  Widget tempCity(WeatherForecast data) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("Montreal",
+        Text("${data.name}",
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.bold)),
-        Text("19", style: TextStyle(color: Colors.white, fontSize: 76)),
+        Text("${data.main?.temp}", style: TextStyle(color: Colors.white, fontSize: 76)),
         Image.network(
-          "https://openweathermap.org/img/wn/04n@2x.png",
+          "https://openweathermap.org/img/wn/${data.weather?[0].icon}@2x.png",
           width: width / 4,
           height: width / 4,
           fit: BoxFit.fill,
         ),
-        Text("Mostly Clear",
+        Text("${data.weather?[0].main}",
             style: TextStyle(
                 color: Color.fromARGB(235, 235, 245, 200), fontSize: 20)),
-        Text("H:24°   L:18°",
+        Text("H:${data.main?.tempMax}°   L:${data.main?.tempMin}°",
             style: TextStyle(color: Colors.white, fontSize: 20)),
         Container(
           margin: EdgeInsets.only(top: 20),

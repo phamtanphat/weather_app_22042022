@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       home: MultiProvider(
         providers: [
           Provider(create: (context) => ApiService()),
-          ProxyProvider<ApiService, WeatherRepository>(
+          ChangeNotifierProxyProvider<ApiService, WeatherRepository>(
             create: (context) => WeatherRepository(),
             update: (context, apiService , repository) {
               repository!.updateApiService(apiService: apiService);
