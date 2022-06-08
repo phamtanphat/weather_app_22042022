@@ -14,12 +14,17 @@ class _WeatherPageState extends State<WeatherPage> {
   late double height;
   TextEditingController controller = TextEditingController();
   late WeatherRepository repository;
+  int initFlg = 0;
 
   @override
   void didChangeDependencies() {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     repository = context.watch();
+    if (initFlg == 0) {
+      repository.getTempFromCity("Hanoi");
+      initFlg = 1;
+    }
     super.didChangeDependencies();
   }
 
