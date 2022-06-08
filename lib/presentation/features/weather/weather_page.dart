@@ -14,14 +14,12 @@ class _WeatherPageState extends State<WeatherPage> {
   late double height;
   TextEditingController controller = TextEditingController();
   late WeatherRepository repository;
-  late Future<WeatherForecast> futureData;
 
   @override
   void didChangeDependencies() {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    repository = context.read();
-    futureData = repository.getTempFromCity("Hanoi");
+    repository = context.watch();
     super.didChangeDependencies();
   }
 
@@ -41,27 +39,13 @@ class _WeatherPageState extends State<WeatherPage> {
                       constraints:
                           BoxConstraints(minHeight: constraint.maxHeight),
                       child: IntrinsicHeight(
-                        child: FutureBuilder<WeatherForecast>(
-                          future: futureData,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Center(
-                                  child: Text(snapshot.error.toString()));
-                            } else if (snapshot.hasData) {
-                              return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [searchBox(), tempCity(snapshot.data!)]);
-                            } else {
-                              return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    searchBox(),
-                                  ]);
-                            }
-                          },
-                        ),
+                        child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.stretch,
+                            children: [
+                              searchBox(),
+                              tempCity(repository.weatherForecast)
+                            ])
                       ),
                     ),
                   );
@@ -81,12 +65,22 @@ class _WeatherPageState extends State<WeatherPage> {
         border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10))),
         hintText: "Input city name",
-        suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {}),
+        suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {
+          String text = controller.text.toString();
+          if (text.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Bạn chưa nhập thành phố")));
+            return;
+          }
+          repository.getTempFromCity(text);
+        }),
       ),
     );
   }
 
-  Widget tempCity(WeatherForecast data) {
+  Widget tempCity(WeatherForecast? data) {
+    if (data == null) {
+      return Container();
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,13 +90,13 @@ class _WeatherPageState extends State<WeatherPage> {
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.bold)),
-        Text("${data.main?.temp}", style: TextStyle(color: Colors.white, fontSize: 76)),
         Image.network(
           "https://openweathermap.org/img/wn/${data.weather?[0].icon}@2x.png",
           width: width / 4,
           height: width / 4,
           fit: BoxFit.fill,
         ),
+        Text("${data.main?.temp}", style: TextStyle(color: Colors.white, fontSize: 76)),
         Text("${data.weather?[0].main}",
             style: TextStyle(
                 color: Color.fromARGB(235, 235, 245, 200), fontSize: 20)),
@@ -139,19 +133,5 @@ class _WeatherPageState extends State<WeatherPage> {
       decoration: BoxDecoration(border: Border.all(width: 30)),
     );
   }
-
-// Widget notFoundCity() {
-//   return Container(
-//     constraints: BoxConstraints.expand(),
-//     child: Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Image.asset("assets/images/ic_not_found.png"),
-//         Text("Seems like you aren't on earth",
-//             style:
-//             TextStyle(fontSize: widget.width / 23, color: Colors.white)),
-//       ],
-//     ),
-//   );
-// }
 }
+
